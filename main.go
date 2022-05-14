@@ -24,14 +24,37 @@ type model struct {
 	cells [][]cell
 }
 
+func returnOneIfEmptyAndCellExists(minefield [][]cell, y int, x int) int {
+	if y < 0 || x < 0 || y >= len(minefield) || x >= len(minefield[0]) {
+		return 0
+	}
+	if minefield[y][x].isBomb {
+		return 1
+	}
+	return 0
+}
+
 func generateMinefield(height int, width int) [][]cell {
 	chanceOfBomb := 10
 	var minefield = make([][]cell, height)
-	for h := 0; h < height; h++ {
+	for h := range minefield {
 		minefield[h] = make([]cell, width)
-		for w := 0; w < width; w++ {
+		for w := range minefield[h] {
 			c := cell{isBomb: rand.Intn(100) < chanceOfBomb}
 			minefield[h][w] = c
+		}
+	}
+	for h := range minefield {
+		for w := range minefield[h] {
+			for y := -1; y <= 1; y++ {
+				for x := -1; x <= 1; x++ {
+					if x != 0 || y != 0 {
+						minefield[h][w].surroundingBombs +=
+							returnOneIfEmptyAndCellExists(minefield, h+y, w+x)
+						// minefield[h][w].surroundingBombs =
+					}
+				}
+			}
 		}
 	}
 	return minefield
