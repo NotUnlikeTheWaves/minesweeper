@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -102,26 +103,39 @@ func fillMinefieldLine(cells []cell) string {
 	runes := make([]string, len(cells))
 	for i, c := range cells {
 		if c.isBomb {
-			runes[i] = " B "
+			runes[i] = "B"
 		} else {
-			runes[i] += fmt.Sprintf(" %d ", c.surroundingBombs)
+			runes[i] += fmt.Sprintf("%d", c.surroundingBombs)
 			if c.surroundingBombs == 0 {
-				runes[i] = "   "
+				runes[i] = " "
 			}
 		}
 	}
-	return fillLine("│", "│", "│", runes)
+	return fillLine("│ ", " │ ", " │", runes)
+}
+
+func colour(item string) string {
+	// assume structural piece
+	if strings.TrimSpace(item) == "" {
+		return item
+	}
+	if len(item) == 1 &&
+		((item[0] > '0' && item[0] < '9') ||
+			item[0] == 'B' || item[0] == ' ') {
+		return fmt.Sprintf("\033[%d;%dm%s", config.bold, config.colourOutline, item)
+	}
+	return fmt.Sprintf("\033[%d;%dm%s", config.bold, 38, item)
 }
 
 func fillLine(start string, separator string, end string, fill []string) string {
-	s := start
+	s := colour(start)
 	for i, r := range fill {
 		if i != 0 {
-			s += separator
+			s += colour(separator)
 		}
-		s += r
+		s += colour(r)
 	}
-	s += end
+	s += colour(end)
 	s += "\n"
 	return s
 }
