@@ -8,12 +8,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-// type model struct {
-// 	choices  []string         // items on the to-do list
-// 	cursor   int              // which to-do list item our cursor is pointing at
-// 	selected map[int]struct{} // which to-do items are selected
-// }
-
 type cell struct {
 	isBomb           bool
 	isClosed         bool
@@ -51,7 +45,6 @@ func generateMinefield(height int, width int) [][]cell {
 					if x != 0 || y != 0 {
 						minefield[h][w].surroundingBombs +=
 							returnOneIfEmptyAndCellExists(minefield, h+y, w+x)
-						// minefield[h][w].surroundingBombs =
 					}
 				}
 			}
