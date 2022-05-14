@@ -12,10 +12,15 @@ import (
 type configuration struct {
 	bold          int
 	colourOutline int
+	colourBomb    int
 }
 
 // https://www.tutorialspoint.com/how-to-output-colored-text-to-a-linux-terminal
-var config = configuration{bold: 1, colourOutline: 33}
+var config = configuration{
+	bold:          1,
+	colourOutline: 30,
+	colourBomb:    36,
+}
 
 type cell struct {
 	isBomb           bool
@@ -119,12 +124,15 @@ func colour(item string) string {
 	if strings.TrimSpace(item) == "" {
 		return item
 	}
-	if len(item) == 1 &&
-		((item[0] > '0' && item[0] < '9') ||
-			item[0] == 'B' || item[0] == ' ') {
-		return fmt.Sprintf("\033[%d;%dm%s", config.bold, config.colourOutline, item)
+	if len(item) == 1 {
+		if item[0] > '0' && item[0] < '9' {
+			return fmt.Sprintf("\033[%d;%dm%s", config.bold, 38, item)
+		}
+		if item == "B" {
+			return fmt.Sprintf("\033[%d;4;%dmB\033[24m", config.bold, config.colourBomb)
+		}
 	}
-	return fmt.Sprintf("\033[%d;%dm%s", config.bold, 38, item)
+	return fmt.Sprintf("\033[%d;%dm%s", config.bold, config.colourOutline, item)
 }
 
 func fillLine(start string, separator string, end string, fill []string) string {
