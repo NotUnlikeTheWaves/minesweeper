@@ -83,32 +83,35 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func fillSpacer(start string, separator string, end string, count int) string {
-	runes := make([]rune, count)
+	runes := make([]string, count)
 	for i := 0; i < count; i++ {
-		runes[i] = '─'
+		runes[i] = "───"
 	}
 	return fillLine(start, separator, end, runes)
 }
 
 func fillMinefieldLine(cells []cell) string {
-	runes := make([]rune, len(cells))
+	runes := make([]string, len(cells))
 	for i, c := range cells {
 		if c.isBomb {
-			runes[i] = 'B'
+			runes[i] = " B "
 		} else {
-			runes[i] += rune(c.surroundingBombs + '0')
+			runes[i] += fmt.Sprintf(" %d ", c.surroundingBombs)
+			if c.surroundingBombs == 0 {
+				runes[i] = "   "
+			}
 		}
 	}
 	return fillLine("│", "│", "│", runes)
 }
 
-func fillLine(start string, separator string, end string, fill []rune) string {
+func fillLine(start string, separator string, end string, fill []string) string {
 	s := start
 	for i, r := range fill {
 		if i != 0 {
 			s += separator
 		}
-		s += string(r)
+		s += r
 	}
 	s += end
 	s += "\n"
