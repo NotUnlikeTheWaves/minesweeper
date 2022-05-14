@@ -8,6 +8,14 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+type configuration struct {
+	bold          int
+	colourOutline int
+}
+
+// https://www.tutorialspoint.com/how-to-output-colored-text-to-a-linux-terminal
+var config = configuration{bold: 1, colourOutline: 33}
+
 type cell struct {
 	isBomb           bool
 	isClosed         bool
