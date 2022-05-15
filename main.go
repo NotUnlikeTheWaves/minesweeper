@@ -24,12 +24,32 @@ var config = configuration{
 
 type cell struct {
 	isBomb           bool
-	isClosed         bool
+	isChecked        bool
+	isRevealed       bool
 	surroundingBombs int
 }
 
+type position struct {
+	x int
+	y int
+}
 type model struct {
-	cells [][]cell
+	cells    [][]cell
+	selected position
+}
+
+type token struct {
+	content    string
+	isSelected bool
+}
+
+func tokenize(content string) token {
+	return token{content: content}
+}
+
+func (t token) asSelected() token {
+	t.isSelected = true
+	return t
 }
 
 func returnOneIfEmptyAndCellExists(minefield [][]cell, y int, x int) int {
@@ -96,46 +116,35 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func fillSpacer(start string, separator string, end string, count int) string {
-	runes := make([]string, count)
+func fillSpacer(start token, separator token, end token, count int) string {
+	runes := make([]token, count)
 	for i := 0; i < count; i++ {
-		runes[i] = "───"
+		runes[i] = tokenize("───")
 	}
 	return fillLine(start, separator, end, runes)
 }
 
-func fillMinefieldLine(cells []cell) string {
-	runes := make([]string, len(cells))
-	for i, c := range cells {
-		if c.isBomb {
-			runes[i] = "B"
-		} else {
-			runes[i] += fmt.Sprintf("%d", c.surroundingBombs)
-			if c.surroundingBombs == 0 {
-				runes[i] = " "
-			}
-		}
+func colour(t token) string {
+	content := t.content
+	if strings.TrimSpace(content) == "" {
+		return content
 	}
-	return fillLine("│ ", " │ ", " │", runes)
+	if len(content) == 1 {
+		render := content
+		if content[0] > '0' && content[0] < '9' {
+			render = fmt.Sprintf("\033[%d;%dm%s", config.bold, 38, render)
+		}
+		if content == "B" {
+			render = fmt.Sprintf("\033[%d;4;%dm%s\033[24m", config.bold, config.colourBomb, render)
+		}
+		return render
+	}
+
+	// assume structural piece otherwise
+	return fmt.Sprintf("\033[%d;%dm%s", config.bold, config.colourOutline, content)
 }
 
-func colour(item string) string {
-	// assume structural piece
-	if strings.TrimSpace(item) == "" {
-		return item
-	}
-	if len(item) == 1 {
-		if item[0] > '0' && item[0] < '9' {
-			return fmt.Sprintf("\033[%d;%dm%s", config.bold, 38, item)
-		}
-		if item == "B" {
-			return fmt.Sprintf("\033[%d;4;%dmB\033[24m", config.bold, config.colourBomb)
-		}
-	}
-	return fmt.Sprintf("\033[%d;%dm%s", config.bold, config.colourOutline, item)
-}
-
-func fillLine(start string, separator string, end string, fill []string) string {
+func fillLine(start token, separator token, end token, fill []token) string {
 	s := colour(start)
 	for i, r := range fill {
 		if i != 0 {
@@ -149,16 +158,27 @@ func fillLine(start string, separator string, end string, fill []string) string 
 }
 
 func (m model) View() string {
-	s := fillSpacer("┌", "┬", "┐", len(m.cells[0]))
+	s := fillSpacer(tokenize("┌"), tokenize("┬"), tokenize("┐"), len(m.cells[0]))
 
-	for i, line := range m.cells {
-		if i != 0 {
-			s += fillSpacer("├", "┼", "┤", len(line))
+	for y, line := range m.cells {
+		if y != 0 {
+			s += fillSpacer(tokenize("├"), tokenize("┼"), tokenize("┤"), len(line))
 		}
-		s += fillMinefieldLine(line)
+		tokens := make([]token, len(line))
+		for x, c := range line {
+			if c.isBomb {
+				tokens[x] = tokenize("B")
+			} else {
+				tokens[x] = tokenize(fmt.Sprintf("%d", c.surroundingBombs))
+				if c.surroundingBombs == 0 {
+					tokens[x] = tokenize(" ")
+				}
+			}
+		}
+		s += fillLine(tokenize("│ "), tokenize(" │ "), tokenize(" │"), tokens)
 	}
 
-	s += fillSpacer("└", "┴", "┘", len(m.cells[0]))
+	s += fillSpacer(tokenize("└"), tokenize("┴"), tokenize("┘"), len(m.cells[0]))
 	// Send the UI for rendering
 	return s
 }
