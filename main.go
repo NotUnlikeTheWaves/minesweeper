@@ -22,53 +22,53 @@ var config = configuration{
 	colourBomb:    36,
 }
 
-type cell struct {
-	isBomb           bool
-	isChecked        bool
-	isRevealed       bool
-	surroundingBombs int
+type Cell struct {
+	IsBomb           bool
+	IsChecked        bool
+	IsRevealed       bool
+	SurroundingBombs int
 }
 
-type position struct {
-	x int
-	y int
+type Position struct {
+	X int
+	Y int
 }
-type model struct {
-	cells    [][]cell
-	selected position
-}
-
-type token struct {
-	content    string
-	isSelected bool
+type Board struct {
+	Cells  [][]Cell
+	Cursor Position
 }
 
-func tokenize(content string) token {
-	return token{content: content}
+type Token struct {
+	Content    string
+	IsSelected bool
 }
 
-func (t token) asSelected() token {
-	t.isSelected = true
+func tokenize(content string) Token {
+	return Token{Content: content}
+}
+
+func (t Token) asSelected() Token {
+	t.IsSelected = true
 	return t
 }
 
-func returnOneIfEmptyAndCellExists(minefield [][]cell, y int, x int) int {
+func returnOneIfEmptyAndCellExists(minefield [][]Cell, y int, x int) int {
 	if y < 0 || x < 0 || y >= len(minefield) || x >= len(minefield[0]) {
 		return 0
 	}
-	if minefield[y][x].isBomb {
+	if minefield[y][x].IsBomb {
 		return 1
 	}
 	return 0
 }
 
-func generateMinefield(height int, width int) [][]cell {
+func generateMinefield(height int, width int) [][]Cell {
 	chanceOfBomb := 10
-	var minefield = make([][]cell, height)
+	var minefield = make([][]Cell, height)
 	for h := range minefield {
-		minefield[h] = make([]cell, width)
+		minefield[h] = make([]Cell, width)
 		for w := range minefield[h] {
-			c := cell{isBomb: rand.Intn(100) < chanceOfBomb}
+			c := Cell{IsBomb: rand.Intn(100) < chanceOfBomb}
 			minefield[h][w] = c
 		}
 	}
@@ -77,7 +77,7 @@ func generateMinefield(height int, width int) [][]cell {
 			for y := -1; y <= 1; y++ {
 				for x := -1; x <= 1; x++ {
 					if x != 0 || y != 0 {
-						minefield[h][w].surroundingBombs +=
+						minefield[h][w].SurroundingBombs +=
 							returnOneIfEmptyAndCellExists(minefield, h+y, w+x)
 					}
 				}
@@ -87,18 +87,18 @@ func generateMinefield(height int, width int) [][]cell {
 	return minefield
 }
 
-func initialModel() model {
-	return model{
-		cells: generateMinefield(10, 40),
+func initialModel() Board {
+	return Board{
+		Cells: generateMinefield(10, 40),
 	}
 }
 
-func (m model) Init() tea.Cmd {
+func (m Board) Init() tea.Cmd {
 	// Just return `nil`, which means "no I/O right now, please."
 	return nil
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Board) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 
 	// Is it a key press?
@@ -116,16 +116,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func fillSpacer(start token, separator token, end token, count int) string {
-	runes := make([]token, count)
+func fillSpacer(start Token, separator Token, end Token, count int) string {
+	runes := make([]Token, count)
 	for i := 0; i < count; i++ {
 		runes[i] = tokenize("───")
 	}
 	return fillLine(start, separator, end, runes)
 }
 
-func colour(t token) string {
-	content := t.content
+func colour(t Token) string {
+	content := t.Content
 	if strings.TrimSpace(content) == "" {
 		return content
 	}
@@ -144,7 +144,7 @@ func colour(t token) string {
 	return fmt.Sprintf("\033[%d;%dm%s", config.bold, config.colourOutline, content)
 }
 
-func fillLine(start token, separator token, end token, fill []token) string {
+func fillLine(start Token, separator Token, end Token, fill []Token) string {
 	s := colour(start)
 	for i, r := range fill {
 		if i != 0 {
@@ -157,20 +157,20 @@ func fillLine(start token, separator token, end token, fill []token) string {
 	return s
 }
 
-func (m model) View() string {
-	s := fillSpacer(tokenize("┌"), tokenize("┬"), tokenize("┐"), len(m.cells[0]))
+func (m Board) View() string {
+	s := fillSpacer(tokenize("┌"), tokenize("┬"), tokenize("┐"), len(m.Cells[0]))
 
-	for y, line := range m.cells {
+	for y, line := range m.Cells {
 		if y != 0 {
 			s += fillSpacer(tokenize("├"), tokenize("┼"), tokenize("┤"), len(line))
 		}
-		tokens := make([]token, len(line))
+		tokens := make([]Token, len(line))
 		for x, c := range line {
-			if c.isBomb {
+			if c.IsBomb {
 				tokens[x] = tokenize("B")
 			} else {
-				tokens[x] = tokenize(fmt.Sprintf("%d", c.surroundingBombs))
-				if c.surroundingBombs == 0 {
+				tokens[x] = tokenize(fmt.Sprintf("%d", c.SurroundingBombs))
+				if c.SurroundingBombs == 0 {
 					tokens[x] = tokenize(" ")
 				}
 			}
@@ -178,7 +178,7 @@ func (m model) View() string {
 		s += fillLine(tokenize("│ "), tokenize(" │ "), tokenize(" │"), tokens)
 	}
 
-	s += fillSpacer(tokenize("└"), tokenize("┴"), tokenize("┘"), len(m.cells[0]))
+	s += fillSpacer(tokenize("└"), tokenize("┴"), tokenize("┘"), len(m.Cells[0]))
 	// Send the UI for rendering
 	return s
 }
