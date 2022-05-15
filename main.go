@@ -19,6 +19,7 @@ func returnOneIfEmptyAndCellExists(minefield [][]board.Cell, y int, x int) int {
 	return 0
 }
 
+// TODO: Generate a deterministic mine field
 func generateMinefield(height int, width int) [][]board.Cell {
 	chanceOfBomb := 10
 	var minefield = make([][]board.Cell, height)

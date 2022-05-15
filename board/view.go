@@ -80,8 +80,11 @@ func fillLine(start Token, separator Token, end Token, fill []Token) string {
 }
 
 type Token struct {
-	Content    string
-	IsSelected bool
+	Content          string
+	Colour           int
+	ColourBackground int
+	Bold             bool
+	IsSelected       bool
 }
 
 func tokenize(content string) Token {
