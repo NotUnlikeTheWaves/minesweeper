@@ -66,53 +66,8 @@ func addStructuralRow(row []Token, numberOfElements int, start rune, separator r
 	row[len(row)-1] = Token{Content: end, Type: TableComponent}
 }
 
-// func fillSpacer(start Token, separator Token, end Token, count int) string {
-// 	runes := make([]Token, count)
-// 	for i := 0; i < count; i++ {
-// 		runes[i] = tokenize("───")
-// 	}
-// 	return fillLine(start, separator, end, runes)
-// }
-
-// func colour(t Token) string {
-// 	content := t.Content
-// 	if strings.TrimSpace(content) == "" {
-// 		return content
-// 	}
-// 	if len(content) == 1 {
-// 		render := content
-// 		if content[0] > '0' && content[0] < '9' {
-// 			render = fmt.Sprintf("\033[%d;%dm%s", config.Config.Bold, 38, render)
-// 		}
-// 		if content == "B" {
-// 			render = fmt.Sprintf("\033[%d;4;%dm%s\033[24m", config.Config.Bold, config.Config.ColourBomb, render)
-// 		}
-// 		return render
-// 	}
-
-// 	// assume structural piece otherwise
-// 	return fmt.Sprintf("\033[%d;%dm%s", config.Config.Bold, config.Config.ColourOutline, content)
-// }
-
-// func fillLine(start Token, separator Token, end Token, fill []Token) string {
-// 	s := colour(start)
-// 	for i, r := range fill {
-// 		if i != 0 {
-// 			s += colour(separator)
-// 		}
-// 		s += colour(r)
-// 	}
-// 	s += colour(end)
-// 	s += "\n"
-// 	return s
-// }
-
 type Token struct {
 	Content    rune
 	Type       tokenType
 	IsSelected bool
 }
-
-// func tokenize(content string) Token {
-// 	return Token{Content: content}
-// }
