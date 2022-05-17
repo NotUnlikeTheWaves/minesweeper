@@ -1,10 +1,13 @@
 package board
 
-import tea "github.com/charmbracelet/bubbletea"
+import (
+	"time"
+
+	tea "github.com/charmbracelet/bubbletea"
+)
 
 func (m Board) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
-	m.revealEmptyCellNeighbours()
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -12,31 +15,28 @@ func (m Board) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "up", "w":
 			m.Cursor.moveUp(&m)
-			return m, nil
 		case "down", "s":
 			m.Cursor.moveDown(&m)
-			return m, nil
 		case "left", "a":
 			m.Cursor.moveLeft(&m)
-			return m, nil
 		case "right", "d":
 			m.Cursor.moveRight(&m)
-			return m, nil
 		case "f", "b":
 			m.toggleFlag()
-			return m, nil
 		case "o":
 			m.revealCell()
-			return m, nil
 		}
-
 	}
 
-	// m.revealEmptyCellNeighbours()
+	if m.revealEmptyCellNeighbours() {
+		return m, tea.Tick(time.Millisecond*100, func(t time.Time) tea.Msg {
+			return msg
+		})
+	}
 	return m, nil
 }
 
-func (board *Board) revealEmptyCellNeighbours() {
+func (board *Board) revealEmptyCellNeighbours() bool {
 	var cellsToReveal []*Cell
 
 	for y := 0; y < board.Height; y++ {
@@ -46,7 +46,9 @@ func (board *Board) revealEmptyCellNeighbours() {
 				continue
 			}
 			for _, c := range board.getSurroundingCells(y, x) {
-				cellsToReveal = append(cellsToReveal, c)
+				if !c.IsVisible {
+					cellsToReveal = append(cellsToReveal, c)
+				}
 			}
 
 		}
@@ -56,6 +58,8 @@ func (board *Board) revealEmptyCellNeighbours() {
 		cell := cellsToReveal[index]
 		cell.IsVisible = true
 	}
+
+	return len(cellsToReveal) > 0
 }
 
 func (board *Board) getSurroundingCells(posY int, posX int) []*Cell {
