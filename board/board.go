@@ -1,6 +1,8 @@
 package board
 
-import tea "github.com/charmbracelet/bubbletea"
+import (
+	tea "github.com/charmbracelet/bubbletea"
+)
 
 type Cell struct {
 	IsBomb           bool
@@ -9,13 +11,14 @@ type Cell struct {
 	SurroundingBombs int
 }
 
-type Position struct {
+type Cursor struct {
 	X int
 	Y int
 }
+
 type Board struct {
 	Cells  [][]Cell
-	Cursor Position
+	Cursor Cursor
 }
 
 func (m Board) Init() tea.Cmd {
