@@ -53,6 +53,7 @@ func initialBoard() board.Board {
 		Cursor:      board.Cursor{X: 0, Y: 0},
 		Height:      10,
 		Width:       40,
+		GameState:   board.Normal,
 	}
 }
 

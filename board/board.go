@@ -16,12 +16,21 @@ type Cursor struct {
 	Y int
 }
 
+type GameState int
+
+const (
+	Normal GameState = iota
+	GameOverWin
+	GameOverLoss
+)
+
 type Board struct {
 	Cells       [][]Cell
 	Cursor      Cursor
 	CurrentCell *Cell
 	Height      int
 	Width       int
+	GameState   GameState
 }
 
 func (m Board) Init() tea.Cmd {

@@ -86,6 +86,9 @@ func (board *Board) revealCell() {
 	}
 
 	board.CurrentCell.IsVisible = true
+	if board.CurrentCell.IsBomb {
+		board.GameState = GameOverLoss
+	}
 }
 
 func (board *Board) toggleFlag() {

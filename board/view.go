@@ -11,6 +11,7 @@ const (
 	Flag
 	Unkown
 	Empty
+	Bomb
 )
 
 func (m Board) View() string {
@@ -71,6 +72,10 @@ func createBoardPiece(cell Cell) Token {
 			item = ' '
 			itemType = Empty
 		}
+		if cell.IsBomb {
+			item = '!'
+			itemType = Bomb
+		}
 		return Token{Content: item, Type: itemType}
 	}
 	return Token{Content: '?', Type: Unkown}
@@ -94,6 +99,9 @@ func (t Token) print() string {
 	if t.Type == Flag {
 		foregroundStyle = "\033[1;35m"
 	}
+	if t.Type == Bomb {
+		foregroundStyle = "\033[1;31m"
+	}
 	return fmt.Sprintf("%s%s%c", backgroundStyle, foregroundStyle, char)
 }
 
@@ -109,14 +117,8 @@ func colourNeighbour(n rune) string {
 		return "35"
 	case '5':
 		return "36"
-	case '6':
-		return "37"
-	case '7':
-		return "37"
-	case '8':
-		return "37"
 	}
-	return "37"
+	return "36"
 }
 
 func addStructuralRow(row []Token, numberOfElements int, start rune, separator rune, end rune) {
