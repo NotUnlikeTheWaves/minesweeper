@@ -23,11 +23,22 @@ func (m Board) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "f", "b":
 			m.toggleFlag()
 			return m, nil
+		case "o":
+			m.revealCell()
+			return m, nil
 		}
 
 	}
 
 	return m, nil
+}
+
+func (board *Board) revealCell() {
+	if board.CurrentCell.IsVisible || board.CurrentCell.IsFlagged {
+		return
+	}
+
+	board.CurrentCell.IsVisible = true
 }
 
 func (board *Board) toggleFlag() {
