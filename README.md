@@ -7,7 +7,7 @@ A minesweeper in the terminal written in Golang with Bubbletea. Very WIP still
 
 Controls are the following:
 
-Move the cursor around with arrow keys.
-Flag bombs with 'f'
-Open/reveal cells with the spacebar
-Press q to quit.
+ * Move the cursor around with arrow keys.
+ * Flag bombs with 'f'
+ * Open/reveal cells with the spacebar
+ * Press q to quit.
