@@ -7,7 +7,7 @@ import (
 type Cell struct {
 	IsBomb           bool
 	IsFlagged        bool
-	IsObserved       bool
+	IsVisible        bool
 	SurroundingBombs int
 }
 

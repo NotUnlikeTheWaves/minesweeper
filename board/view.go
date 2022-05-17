@@ -9,7 +9,7 @@ const (
 	TableComponent
 	Neighbours
 	Flag
-	Unobserved
+	Unkown
 	Empty
 )
 
@@ -31,15 +31,10 @@ func (m Board) View() string {
 		viewRow := viewModel[h*2+1]
 		for w, cell := range boardRow {
 			base := w * 4
-			item := rune('0' + cell.SurroundingBombs)
-			if cell.IsBomb {
-				item = '⚑'
-			} else if cell.SurroundingBombs == 0 {
-				item = ' '
-			}
+			item := createBoardPiece(cell)
 			viewRow[base] = Token{Content: '│', Type: TableComponent}
 			viewRow[base+1] = Token{Content: ' ', Type: TableSpace}
-			viewRow[base+2] = Token{Content: item, Type: Neighbours}
+			viewRow[base+2] = item
 			viewRow[base+3] = Token{Content: ' ', Type: TableSpace}
 		}
 		viewRow[len(viewRow)-1] = Token{Content: '│', Type: TableComponent}
@@ -65,16 +60,34 @@ func (m Board) View() string {
 	return s
 }
 
+func createBoardPiece(cell Cell) Token {
+	if cell.IsVisible {
+		item := rune('0' + cell.SurroundingBombs)
+		itemType := Neighbours
+		if cell.IsFlagged {
+			item = '⚑'
+			itemType = Flag
+		} else if cell.SurroundingBombs == 0 {
+			item = ' '
+			itemType = Empty
+		}
+		return Token{Content: item, Type: itemType}
+	}
+	return Token{Content: '?', Type: Unkown}
+}
+
 func translateBoardPositionToViewModelPosition(y int, x int) (int, int) {
 	return (1 + y*2), (2 + x*4)
 }
 
 func (t Token) print() string {
+	char := t.Content
+
 	backgroundColor := ";40"
 	if t.IsSelected {
 		backgroundColor = ";44"
 	}
-	return fmt.Sprintf("\033[1%sm%c", backgroundColor, t.Content)
+	return fmt.Sprintf("\033[1%sm%c", backgroundColor, char)
 }
 
 func addStructuralRow(row []Token, numberOfElements int, start rune, separator rune, end rune) {
