@@ -9,5 +9,5 @@ Controls are the following:
 
  * Move the cursor around with arrow keys.
  * Flag bombs with 'f'
- * Open/reveal cells with the spacebar
+ * Open/reveal cells with the `o`
  * Press q to quit.
