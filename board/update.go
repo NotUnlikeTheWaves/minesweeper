@@ -57,6 +57,7 @@ func (board *Board) revealEmptyCellNeighbours() bool {
 	for index := 0; index < len(cellsToReveal); index++ {
 		cell := cellsToReveal[index]
 		cell.IsVisible = true
+		cell.IsFlagged = false
 	}
 
 	return len(cellsToReveal) > 0
@@ -92,8 +93,10 @@ func (board *Board) revealCell() {
 }
 
 func (board *Board) toggleFlag() {
-	board.CurrentCell.IsFlagged =
-		!board.CurrentCell.IsFlagged
+	if !board.CurrentCell.IsVisible {
+		board.CurrentCell.IsFlagged =
+			!board.CurrentCell.IsFlagged
+	}
 }
 
 func (cursor *Cursor) moveDown(board *Board) {
