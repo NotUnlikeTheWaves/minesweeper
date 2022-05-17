@@ -51,6 +51,8 @@ func initialBoard() board.Board {
 		Cells:       minefield,
 		CurrentCell: &minefield[0][0],
 		Cursor:      board.Cursor{X: 0, Y: 0},
+		Height:      10,
+		Width:       40,
 	}
 }
 

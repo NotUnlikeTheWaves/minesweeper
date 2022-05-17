@@ -20,6 +20,8 @@ type Board struct {
 	Cells       [][]Cell
 	Cursor      Cursor
 	CurrentCell *Cell
+	Height      int
+	Width       int
 }
 
 func (m Board) Init() tea.Cmd {
