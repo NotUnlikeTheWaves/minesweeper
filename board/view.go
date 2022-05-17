@@ -1,5 +1,7 @@
 package board
 
+import "fmt"
+
 const widthSpacing = 3
 
 type tokenType int
@@ -9,6 +11,8 @@ const (
 	TableComponent
 	Neighbours
 	Flag
+	Unobserved
+	Empty
 )
 
 func (m Board) View() string {
@@ -19,6 +23,7 @@ func (m Board) View() string {
 		viewModel[i] = make([]Token, width)
 	}
 
+	// Plomp stuff down
 	numberOfElements := len(m.Cells[0])
 	addStructuralRow(viewModel[0], numberOfElements, '┌', '┬', '┐')
 	for h, boardRow := range m.Cells {
@@ -30,7 +35,7 @@ func (m Board) View() string {
 			base := w * 4
 			item := rune('0' + cell.SurroundingBombs)
 			if cell.IsBomb {
-				item = 'B'
+				item = '⚑'
 			} else if cell.SurroundingBombs == 0 {
 				item = ' '
 			}
@@ -43,15 +48,35 @@ func (m Board) View() string {
 	}
 	addStructuralRow(viewModel[height-1], numberOfElements, '└', '┴', '┘')
 
+	// Select the 'selected' cell
+	vmY, vmX := translateBoardPositionToViewModelPosition(m.Cursor.Y, m.Cursor.X)
+	for offsetY := -1; offsetY <= 1; offsetY++ {
+		for offsetX := -2; offsetX <= 2; offsetX++ {
+			viewModel[vmY+offsetY][vmX+offsetX].IsSelected = true
+		}
+	}
+
 	s := ""
 	for _, row := range viewModel {
 		for _, cell := range row {
-			s += string(cell.Content)
+			s += cell.print()
 		}
 		s += "\n"
 	}
 	// Send the UI for rendering
 	return s
+}
+
+func translateBoardPositionToViewModelPosition(y int, x int) (int, int) {
+	return (1 + y*2), (2 + x*4)
+}
+
+func (t Token) print() string {
+	backgroundColor := ";40"
+	if t.IsSelected {
+		backgroundColor = ";44"
+	}
+	return fmt.Sprintf("\033[1%sm%c", backgroundColor, t.Content)
 }
 
 func addStructuralRow(row []Token, numberOfElements int, start rune, separator rune, end rune) {

@@ -4,8 +4,8 @@ import tea "github.com/charmbracelet/bubbletea"
 
 type Cell struct {
 	IsBomb           bool
-	IsChecked        bool
-	IsRevealed       bool
+	IsFlagged        bool
+	IsObserved       bool
 	SurroundingBombs int
 }
 
