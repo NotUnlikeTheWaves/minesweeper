@@ -46,8 +46,11 @@ func generateMinefield(height int, width int) [][]board.Cell {
 }
 
 func initialBoard() board.Board {
+	minefield := generateMinefield(10, 40)
 	return board.Board{
-		Cells: generateMinefield(10, 40),
+		Cells:       minefield,
+		CurrentCell: &minefield[0][0],
+		Cursor:      board.Cursor{X: 0, Y: 0},
 	}
 }
 
