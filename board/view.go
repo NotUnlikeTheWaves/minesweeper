@@ -61,13 +61,13 @@ func (m Board) View() string {
 }
 
 func createBoardPiece(cell Cell) Token {
+	if cell.IsFlagged {
+		return Token{Content: '⚑', Type: Flag}
+	}
 	if cell.IsVisible {
 		item := rune('0' + cell.SurroundingBombs)
 		itemType := Neighbours
-		if cell.IsFlagged {
-			item = '⚑'
-			itemType = Flag
-		} else if cell.SurroundingBombs == 0 {
+		if cell.SurroundingBombs == 0 {
 			item = ' '
 			itemType = Empty
 		}

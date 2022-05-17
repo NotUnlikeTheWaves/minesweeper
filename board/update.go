@@ -20,10 +20,19 @@ func (m Board) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "right", "d":
 			m.Cursor.moveRight(m)
 			return m, nil
+		case "f", "b":
+			m.toggleFlag()
+			return m, nil
 		}
+
 	}
 
 	return m, nil
+}
+
+func (board *Board) toggleFlag() {
+	board.Cells[board.Cursor.Y][board.Cursor.X].IsFlagged =
+		!board.Cells[board.Cursor.Y][board.Cursor.X].IsFlagged
 }
 
 func (cursor *Cursor) moveDown(board Board) {
