@@ -17,8 +17,9 @@ type Cursor struct {
 }
 
 type Board struct {
-	Cells  [][]Cell
-	Cursor Cursor
+	Cells       [][]Cell
+	Cursor      Cursor
+	CurrentCell *Cell
 }
 
 func (m Board) Init() tea.Cmd {

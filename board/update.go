@@ -9,16 +9,16 @@ func (m Board) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		case "up", "w":
-			m.Cursor.moveUp(m)
+			m.Cursor.moveUp(&m)
 			return m, nil
 		case "down", "s":
-			m.Cursor.moveDown(m)
+			m.Cursor.moveDown(&m)
 			return m, nil
 		case "left", "a":
-			m.Cursor.moveLeft(m)
+			m.Cursor.moveLeft(&m)
 			return m, nil
 		case "right", "d":
-			m.Cursor.moveRight(m)
+			m.Cursor.moveRight(&m)
 			return m, nil
 		case "f", "b":
 			m.toggleFlag()
@@ -31,30 +31,34 @@ func (m Board) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (board *Board) toggleFlag() {
-	board.Cells[board.Cursor.Y][board.Cursor.X].IsFlagged =
-		!board.Cells[board.Cursor.Y][board.Cursor.X].IsFlagged
+	board.CurrentCell.IsFlagged =
+		!board.CurrentCell.IsFlagged
 }
 
-func (cursor *Cursor) moveDown(board Board) {
+func (cursor *Cursor) moveDown(board *Board) {
 	if cursor.Y+1 < len(board.Cells) {
 		cursor.Y++
+		board.CurrentCell = &board.Cells[board.Cursor.Y][board.Cursor.X]
 	}
 }
 
-func (cursor *Cursor) moveUp(board Board) {
+func (cursor *Cursor) moveUp(board *Board) {
 	if cursor.Y-1 >= 0 {
 		cursor.Y--
+		board.CurrentCell = &board.Cells[board.Cursor.Y][board.Cursor.X]
 	}
 }
 
-func (cursor *Cursor) moveRight(board Board) {
+func (cursor *Cursor) moveRight(board *Board) {
 	if cursor.X+1 < len(board.Cells[0]) {
 		cursor.X++
+		board.CurrentCell = &board.Cells[board.Cursor.Y][board.Cursor.X]
 	}
 }
 
-func (cursor *Cursor) moveLeft(board Board) {
+func (cursor *Cursor) moveLeft(board *Board) {
 	if cursor.X-1 >= 0 {
 		cursor.X--
+		board.CurrentCell = &board.Cells[board.Cursor.Y][board.Cursor.X]
 	}
 }
