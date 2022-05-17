@@ -91,6 +91,9 @@ func (t Token) print() string {
 	if t.Type == Neighbours {
 		foregroundStyle = fmt.Sprintf("\033[1;%sm", colourNeighbour(t.Content))
 	}
+	if t.Type == Flag {
+		foregroundStyle = "\033[1;35m"
+	}
 	return fmt.Sprintf("%s%s%c", backgroundStyle, foregroundStyle, char)
 }
 
