@@ -83,11 +83,37 @@ func translateBoardPositionToViewModelPosition(y int, x int) (int, int) {
 func (t Token) print() string {
 	char := t.Content
 
-	backgroundColor := ";40"
+	backgroundStyle := "\033[1;40m"
+	foregroundStyle := "\033[1;37m"
 	if t.IsSelected {
-		backgroundColor = ";44"
+		backgroundStyle = "\033[1;44m"
 	}
-	return fmt.Sprintf("\033[1%sm%c", backgroundColor, char)
+	if t.Type == Neighbours {
+		foregroundStyle = fmt.Sprintf("\033[1;%sm", colourNeighbour(t.Content))
+	}
+	return fmt.Sprintf("%s%s%c", backgroundStyle, foregroundStyle, char)
+}
+
+func colourNeighbour(n rune) string {
+	switch n {
+	case '1':
+		return "32"
+	case '2':
+		return "33"
+	case '3':
+		return "31"
+	case '4':
+		return "35"
+	case '5':
+		return "36"
+	case '6':
+		return "37"
+	case '7':
+		return "37"
+	case '8':
+		return "37"
+	}
+	return "37"
 }
 
 func addStructuralRow(row []Token, numberOfElements int, start rune, separator rune, end rune) {
