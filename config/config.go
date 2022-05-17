@@ -1,14 +1,9 @@
 package config
 
 type configuration struct {
-	Bold          int
-	ColourOutline int
-	ColourBomb    int
+	Bold int
 }
 
-// https://www.tutorialspoint.com/how-to-output-colored-text-to-a-linux-terminal
 var Config = configuration{
-	Bold:          1,
-	ColourOutline: 30,
-	ColourBomb:    36,
+	Bold: 1,
 }

@@ -2,8 +2,6 @@ package board
 
 import "fmt"
 
-const widthSpacing = 3
-
 type tokenType int
 
 const (
@@ -63,7 +61,7 @@ func (m Board) View() string {
 		}
 		s += "\n"
 	}
-	// Send the UI for rendering
+
 	return s
 }
 
