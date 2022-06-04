@@ -23,7 +23,7 @@ func (m Board) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.Cursor.moveRight(&m)
 		case "f", "b":
 			m.toggleFlag()
-		case " ":
+		case " ", "enter":
 			m.revealCell()
 		}
 	}
