@@ -90,6 +90,9 @@ func (t Token) print() string {
 
 	backgroundStyle := "\033[1;40m"
 	foregroundStyle := "\033[1;37m"
+	if t.Type == TableComponent {
+		foregroundStyle = "\033[1;30m"
+	}
 	if t.IsSelected {
 		backgroundStyle = "\033[1;44m"
 	}

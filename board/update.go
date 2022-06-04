@@ -28,6 +28,7 @@ func (m Board) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
+	// If any cells can be revealed, do so and wait 100ms for visual effect
 	if m.revealEmptyCellNeighbours() {
 		return m, tea.Tick(time.Millisecond*100, func(t time.Time) tea.Msg {
 			return msg
