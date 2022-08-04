@@ -9,7 +9,7 @@ const (
 	TableComponent
 	Neighbours
 	Flag
-	Unkown
+	Unknown
 	Empty
 	Bomb
 )
@@ -78,7 +78,7 @@ func createBoardPiece(cell Cell) Token {
 		}
 		return Token{Content: item, Type: itemType}
 	}
-	return Token{Content: '?', Type: Unkown}
+	return Token{Content: '?', Type: Unknown}
 }
 
 func translateBoardPositionToViewModelPosition(y int, x int) (int, int) {
